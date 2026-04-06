@@ -10,12 +10,18 @@ import org.postwork.er.swiftcare.model.Operation;
 import org.postwork.er.swiftcare.model.Severity;
 import org.postwork.er.swiftcare.repository.ClinicRepository;
 import org.postwork.er.swiftcare.service.ClinicService;
+import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+@Service
 public class ClinicServiceImpl implements ClinicService {
 
     private ClinicRepository repository;
+
+    public ClinicServiceImpl(ClinicRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public ClinicResponse createClinic(CreateClinicRequest request) {
@@ -28,14 +34,14 @@ public class ClinicServiceImpl implements ClinicService {
 
         repository.save(clinic);
 
-        return mapToResponce(clinic);
+        return mapToResponse(clinic);
     }
 
     @Override
     public ClinicResponse getClinic(UUID id) {
         Clinic clinic =  getClinicOrThrow(id);
 
-        return mapToResponce(clinic);
+        return mapToResponse(clinic);
     }
 
     @Override
@@ -76,7 +82,7 @@ public class ClinicServiceImpl implements ClinicService {
 
 
     private int updateCount(int current, Operation operation) {
-        return operation == Operation.INCREMENR ? current + 1 : current -1;
+        return operation == Operation.INCREMENT ? current + 1 : current -1;
     }
 
     private  int calculateWaitTime(Clinic clinic) {
@@ -93,7 +99,7 @@ public class ClinicServiceImpl implements ClinicService {
                 .orElseThrow(() -> new ResourceNotFoundException("Clinic not Found"));
     }
 
-    private ClinicResponse mapToResponce(Clinic clinic) {
+    private ClinicResponse mapToResponse(Clinic clinic) {
         return  new ClinicResponse(
                 clinic.getId(),
                 clinic.getName(),
